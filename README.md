@@ -10,6 +10,16 @@ docker-compose up
 
 Visit the Hasura Console http://localhost:8080
 
+Run the Frontend
+
+```
+cd components/practice-question
+yarn install
+yarn start
+```
+
+Visit the practice-question web component demo http://localhost:8001/demo/
+
 
 ## Developing in Hasura
 
