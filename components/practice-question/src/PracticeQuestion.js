@@ -30,7 +30,27 @@ export class PracticeQuestion extends LitElement {
 
   submit() {
     const values = this.constructor.collectFormValues(this.shadowRoot)
-    console.log('values:', values)
+    // @todo find es6 way of doing this
+    const arrayToObject = (arr, keyField, valueField) => Object.assign({}, ...arr.map(item => ({[item[keyField]]: item[valueField]})))
+    const variables = arrayToObject(values, "name", "value");
+    fetch("http://localhost:8080/v1/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `
+          mutation CreateQuestion($question: String, $answer: String, $note: String) {
+            insert_question(objects: {answer: $answer, question: $question, note: $note}) {
+              returning {
+                id
+              }
+            }
+          }
+        `,
+        variables
+      })
+    })
+      .then(res => res.json())
+      .then(res => console.log(res.data));
   }
 
   /**
