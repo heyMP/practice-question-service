@@ -15,10 +15,23 @@
     import { html, render } from 'lit-html';
     import '../practice-question.js';
 
-    const title = 'Hello owc World!';
+    let state = 'ready';
+    const updateState = (state) => {
+      const practiceQuestion = document.querySelector("practice-question");
+      practiceQuestion.setAttribute("__state", state);
+    }
+
     render(
       html`
-        <practice-question .title=${title}>
+        <label for="state">Choose a state:</label>
+        <select name="state" id="state" @change=${(e) => updateState(e.target.value)}>
+          <option value="ready">Ready</option>
+          <option value="submitting">Submitting</option>
+          <option value="successful_submission">Successful Submission</option>
+          <option value="error_submitting">Error Submitting</option>
+          <option value="service_unavailable">Service Unavailable</option>
+        </select>
+        <practice-question>
           some more light-dom
         </practice-question>
       `,
