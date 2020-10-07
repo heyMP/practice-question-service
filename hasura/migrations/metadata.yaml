@@ -7,6 +7,53 @@ tables:
   - name: user
     using:
       foreign_key_constraint_on: user_id
+  insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      set:
+        user_id: x-hasura-User-Id
+      columns:
+      - answer
+      - note
+      - question
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - answer
+      - note
+      - question
+      - created_at
+      - updated_at
+      - user_id
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - answer
+      - note
+      - question
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: users

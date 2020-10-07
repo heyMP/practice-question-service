@@ -1,0 +1,20 @@
+- args:
+    permission:
+      backend_only: false
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      columns:
+      - answer
+      - note
+      - question
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+    role: user
+    table:
+      name: question
+      schema: public
+  type: create_update_permission

@@ -1,0 +1,22 @@
+- args:
+    permission:
+      allow_aggregations: true
+      backend_only: false
+      columns:
+      - id
+      - answer
+      - note
+      - question
+      - created_at
+      - updated_at
+      - user_id
+      computed_fields: []
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      limit: null
+    role: user
+    table:
+      name: question
+      schema: public
+  type: create_select_permission

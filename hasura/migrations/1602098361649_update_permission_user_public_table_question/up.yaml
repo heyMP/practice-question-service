@@ -1,0 +1,16 @@
+- args:
+    permission:
+      allow_upsert: true
+      backend_only: false
+      check: {}
+      columns:
+      - answer
+      - note
+      - question
+      set:
+        user_id: x-hasura-User-Id
+    role: user
+    table:
+      name: question
+      schema: public
+  type: create_insert_permission
