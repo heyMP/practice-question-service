@@ -3,3 +3,6 @@ tables:
 - table:
     schema: public
     name: question
+- table:
+    schema: public
+    name: users

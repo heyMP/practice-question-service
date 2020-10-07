@@ -30,7 +30,7 @@ Run the console
 
 ```
 cd hasura
-hasura console
+hasura console --admin-secret password
 ```
 
 A browser window will automatically pop up.  Any changes made in that browser session will be tracked as migration changes in your local file system.
