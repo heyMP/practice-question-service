@@ -80,6 +80,9 @@ export class PracticeQuestion extends LitElement {
   updated(changedProperties) {
     changedProperties.forEach((oldValue, name) => {
       if (name === "__state") {
+        // Notify other elements that the state has changed
+        this.__dispatchEvent("practice-question-changed", { detail: { state: this.__state }})
+
         switch (this.__state) {
           case "ready":
             break;
@@ -94,6 +97,10 @@ export class PracticeQuestion extends LitElement {
 
           case "successful_submission":
             this.__dialogText = "Question Saved ✅"
+            setTimeout(() => {
+              this.__clearFormValues();
+              this.__state = "ready";
+            }, 2000);
             break;
 
           case "service_unavailable":
@@ -105,6 +112,14 @@ export class PracticeQuestion extends LitElement {
         }
       }
     })
+  }
+
+  __dispatchEvent(name, options = {}) {
+    const defaultOptions = {
+      bubbles: true,
+      composed: true
+    }
+    this.dispatchEvent(new CustomEvent(name, Object.assign({}, defaultOptions, options)))
   }
 
   submit() {
