@@ -2,8 +2,8 @@
     cascade: false
     read_only: false
     sql: |-
-      alter table "public"."question"
-                 add constraint "question_user_id_fkey"
+      alter table "public"."questions"
+                 add constraint "questions_user_id_fkey"
                  foreign key ("user_id")
                  references "public"."users"
                  ("id") on update restrict on delete restrict;

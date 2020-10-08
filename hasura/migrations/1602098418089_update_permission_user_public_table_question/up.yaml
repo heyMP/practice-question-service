@@ -17,6 +17,6 @@
       limit: null
     role: user
     table:
-      name: question
+      name: questions
       schema: public
   type: create_select_permission

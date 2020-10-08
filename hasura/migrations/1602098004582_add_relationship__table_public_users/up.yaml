@@ -7,6 +7,6 @@
       foreign_key_constraint_on:
         column: user_id
         table:
-          name: question
+          name: questions
           schema: public
   type: create_array_relationship

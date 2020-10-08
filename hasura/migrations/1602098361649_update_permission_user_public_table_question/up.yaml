@@ -11,6 +11,6 @@
         user_id: x-hasura-User-Id
     role: user
     table:
-      name: question
+      name: questions
       schema: public
   type: create_insert_permission

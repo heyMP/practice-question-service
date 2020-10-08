@@ -1,5 +1,5 @@
 - args:
     cascade: false
     read_only: false
-    sql: DROP TABLE "public"."question";
+    sql: DROP TABLE "public"."questions";
   type: run_sql

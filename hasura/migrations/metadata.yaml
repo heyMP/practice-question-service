@@ -2,11 +2,7 @@ version: 2
 tables:
 - table:
     schema: public
-    name: question
-  object_relationships:
-  - name: user
-    using:
-      foreign_key_constraint_on: user_id
+    name: questions
   insert_permissions:
   - role: user
     permission:
@@ -57,11 +53,3 @@ tables:
 - table:
     schema: public
     name: users
-  array_relationships:
-  - name: questions
-    using:
-      foreign_key_constraint_on:
-        column: user_id
-        table:
-          schema: public
-          name: question
