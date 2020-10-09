@@ -5,18 +5,18 @@ to your service.
 
 function fetchGraphQL(operationsDoc, operationName, variables) {
   return fetch(
-    "http://localhost:8080/v1/graphql",
+    'https://practice-questions-service-hasura.courses.science.psu.edu/v1/graphql',
     {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Authorization": "cf2a31e4-21e8-4272-8c1f-a06d875d7e71",
-        "Content-Type": "application/json"
+        Authorization: 'cf2a31e4-21e8-4272-8c1f-a06d875d7e71',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         query: operationsDoc,
-        variables: variables,
-        operationName: operationName
-      })
+        variables,
+        operationName,
+      }),
     }
   ).then(res => res.json());
 }
@@ -54,25 +54,17 @@ const operationsDoc = `
 `;
 
 export const fetchGetQuestions = () => {
-  return fetchGraphQL(
-    operationsDoc,
-    "getQuestions",
-    {}
-  );
-}
+  return fetchGraphQL(operationsDoc, 'getQuestions', {});
+};
 
-export const fetchGetQuestion = (id) => {
-  return fetchGraphQL(
-    operationsDoc,
-    "getQuestion",
-    {"id": id}
-  );
-}
+export const fetchGetQuestion = id => {
+  return fetchGraphQL(operationsDoc, 'getQuestion', { id: id });
+};
 
 export const executeCreateQuestion = (answer, note, question) => {
-  return fetchGraphQL(
-    operationsDoc,
-    "createQuestion",
-    {"answer": answer, "note": note, "question": question}
-  );
-}
+  return fetchGraphQL(operationsDoc, 'createQuestion', {
+    answer: answer,
+    note: note,
+    question: question,
+  });
+};
