@@ -39,5 +39,6 @@ A browser window will automatically pop up.  Any changes made in that browser se
 
 ```
 cd hasura
-hasura migrate apply
+hasura migrate apply --admin-secret password
+hasura seeds apply --admin-secret password
 ```
