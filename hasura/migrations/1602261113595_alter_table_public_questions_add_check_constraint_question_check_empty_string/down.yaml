@@ -1,0 +1,5 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: alter table "public"."questions" drop constraint "question_check_empty_string";
+  type: run_sql

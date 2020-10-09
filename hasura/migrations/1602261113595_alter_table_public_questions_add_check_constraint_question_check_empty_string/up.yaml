@@ -1,0 +1,6 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: alter table "public"."questions" add constraint "question_check_empty_string"
+      check (question != '');
+  type: run_sql

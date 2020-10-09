@@ -1,4 +1,5 @@
 import { html, css, LitElement } from 'lit-element';
+import { executeCreateQuestion } from "../lib/queries.js";
 
 export class PracticeQuestion extends LitElement {
   static get styles() {
@@ -19,15 +20,7 @@ export class PracticeQuestion extends LitElement {
       }
 
       [part="dialog"] {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.5);
+        display: block;
         transform: scale(0);
         transition: all .3s;
       }
@@ -56,6 +49,7 @@ export class PracticeQuestion extends LitElement {
       counter: { type: Number },
       __state: { type: String, reflect: true },
       __dialogText: { type: String },
+      __errors: { type: Array }
     };
   }
 
@@ -66,6 +60,7 @@ export class PracticeQuestion extends LitElement {
     this.__formValue;
     this.__state = "ready";
     this.__dialogText = "";
+    this.__errors = [];
   }
 
   connectedCallback() {
@@ -97,10 +92,10 @@ export class PracticeQuestion extends LitElement {
 
           case "successful_submission":
             this.__dialogText = "Question Saved ✅"
+            this.__clearFormValues();
             setTimeout(() => {
-              this.__clearFormValues();
               this.__state = "ready";
-            }, 2000);
+            }, 2000)
             break;
 
           case "service_unavailable":
@@ -131,28 +126,35 @@ export class PracticeQuestion extends LitElement {
     for (let value of values) {
       variables[value.name] = value.value;
     }
-    fetch("http://localhost:8080/v1/graphql", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: `
-          mutation CreateQuestion($question: String, $answer: String, $note: String) {
-            insert_question(objects: {answer: $answer, question: $question, note: $note}) {
-              returning {
-                id
+    const { answer, note, question } = variables;
+    executeCreateQuestion(answer, note, question)
+      .then(res => {
+        if (res.errors) {
+          this.__state = "error_submitting"
+          // find a good error message for user.
+          this.__errors = res.errors.map(error => {
+            const message = error.message
+            if (message.includes("answer_check_empty_string")) {
+              return {
+                id: "answer_check_empty_string",
+                message: "Answer field is required"
               }
             }
-          }
-        `,
-        variables
-      })
-    })
-      .then(res => res.json())
-      .then(res => {
-        this.__state = "successful_submission"
+            else if (message.includes("question_check_empty_string")) {
+              return {
+                id: "question_check_empty_string",
+                message: "Question field is required"
+              }
+            }
+            return error
+          })
+        }
+        else {
+          this.__state = "successful_submission"
+        }
       })
       .catch(res => {
-        this.__state = "error_submission"
+        this.__state = "error_submitting"
       })
   }
 
@@ -204,7 +206,16 @@ export class PracticeQuestion extends LitElement {
 
       <button part="button" @click="${this.submit}">Submit</button>
 
-      <div part="dialog">${this.__dialogText}</div>
+      <div part="dialog">
+        ${this.__dialogText ? html`
+          <div part="dialog-text">${this.__dialogText}</div>
+        ` : ''}
+        ${this.__errors ? html`
+          ${this.__errors.map(error => html`
+            <div part="error">${error.message}</div>
+          `)}
+        ` : ""}
+      </div>
     `;
   }
 }
