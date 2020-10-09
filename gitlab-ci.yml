@@ -1,0 +1,17 @@
+image: tiangolo/docker-with-compose
+
+stages:
+  - deploy
+
+deploy-cod1-swarm:
+  stage: deploy
+  variables:
+    HOST: "courses.science.psu.edu"
+  tags:
+    - cod1
+  script:
+    - pwd
+    - ls -la
+    - docker stack deploy -c docker-compose.yml --resolve-image always practice-questions
+  only:
+    - master
