@@ -1,8 +1,8 @@
 image: tiangolo/docker-with-compose
 
 stages:
-  - deploy
   - build
+  - deploy
 
 build-cod1-swarm:
   stage: build
