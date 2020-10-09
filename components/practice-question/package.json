@@ -7,7 +7,7 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
-    "start": "web-dev-server --app-index demo/index.html --node-resolve --open --watch",
+    "start": "web-dev-server --app-index demo/index.html --node-resolve --open --watch --host 0.0.0.0",
     "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
     "format:eslint": "eslint --ext .js,.html . --fix --ignore-path .gitignore",
     "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
