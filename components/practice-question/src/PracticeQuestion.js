@@ -33,6 +33,14 @@ export class PracticeQuestion extends LitElement {
         width: 100%;
       }
 
+      textarea:invalid:not(:placeholder-shown) {
+        border: 1px solid red;
+      }
+
+      textarea:valid:not(:placeholder-shown) {
+        border: 1px solid green;
+      }
+
       /* @todo turn this into a part */
       textarea {
         width: 100%;
@@ -70,6 +78,13 @@ export class PracticeQuestion extends LitElement {
     if (this.__state !== "service_unavailable") {
       this.pingService();
     }
+
+    this.shadowRoot.addEventListener("focusin", this.__focusinHandler.bind(this));
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.shadowRoot.removeEventListener("focusin", this.__focusinHandler.bind(this));
   }
 
   updated(changedProperties) {
@@ -92,9 +107,9 @@ export class PracticeQuestion extends LitElement {
 
           case "successful_submission":
             this.__dialogText = "Question Saved ✅"
-            this.__clearFormValues();
             setTimeout(() => {
               this.__state = "ready";
+              this.__clearFormValues();
             }, 2000)
             break;
 
@@ -117,7 +132,10 @@ export class PracticeQuestion extends LitElement {
     this.dispatchEvent(new CustomEvent(name, Object.assign({}, defaultOptions, options)))
   }
 
-  submit() {
+  submit(event) {
+    // prevent the default form submission
+    event.preventDefault();
+    event.stopPropagation();
     this.__state = "submitting";
     // get an array of form values
     const values = this.constructor.collectFormValues(this.shadowRoot)
@@ -162,6 +180,19 @@ export class PracticeQuestion extends LitElement {
     const formItems = this.shadowRoot.querySelectorAll('[name]');
     formItems.forEach(element => {
       element.value = ""
+      // also make sure there are default placeholders for error validation
+      if (element.hasAttribute("required")) {
+        const placeholder = element.getAttribute("placeholder");
+        let setPlaceholder = true;
+        if (placeholder) {
+          if (placeholder !== "" || placeholder !== " ") {
+            setPlaceholder = false
+          }
+        }
+        if (setPlaceholder) {
+          element.setAttribute("placeholder", " ");
+        }
+      }
     });
   }
 
@@ -187,24 +218,36 @@ export class PracticeQuestion extends LitElement {
       .finally(() => this.__state = "ready")
   }
 
+  // Add the dirty form field validation trick where
+  // we use an empty placeholder to tell if the form
+  // has been touched.
+  // https://css-tricks.com/form-validation-ux-html-css/
+  __focusinHandler(e) {
+    if (e.target.hasAttribute("placeholder")) {
+      e.target.removeAttribute("placeholder");
+    }
+  }
+
   render() {
     return html`
+    <form @submit=${this.submit}>
       <div part="field">
         <label part="label" for="question">question</label>
-        <textarea id="question" name="question" part="question"></textarea>
+        <textarea id="question" name="question" part="question" .disabled=${this.__state !== "ready"} required placeholder=" "></textarea>
       </div>
       
       <div part="field">
         <label part="label" for="answer">answer</label>
-        <textarea id="answer" name="answer" part="answer"></textarea>
+        <textarea id="answer" name="answer" part="answer" .disabled=${this.__state !== "ready"} required placeholder=" "></textarea>
       </div>
 
       <div part="field">
         <label part="label" for="note">note</label>
-        <textarea id="note" name="note" part="note"></textarea>
+        <textarea id="note" name="note" part="note" .disabled=${this.__state !== "ready"}></textarea>
       </div>
 
-      <button part="button" @click="${this.submit}">Submit</button>
+      <input type="submit" value="Submit" part="button">
+    </form>
 
       <div part="dialog">
         ${this.__dialogText ? html`
