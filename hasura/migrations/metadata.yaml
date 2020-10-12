@@ -56,6 +56,9 @@ tables:
           _eq: X-Hasura-User-Id
 - table:
     schema: public
+    name: tags
+- table:
+    schema: public
     name: users
   array_relationships:
   - name: questions

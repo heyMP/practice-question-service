@@ -1,0 +1,10 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: CREATE TABLE "public"."tags"("tags" text NOT NULL, PRIMARY KEY ("tags") ,
+      UNIQUE ("tags"));
+  type: run_sql
+- args:
+    name: tags
+    schema: public
+  type: add_existing_table_or_view
