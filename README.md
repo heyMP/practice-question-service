@@ -29,7 +29,7 @@ we need to run Hasura in Console mode.  This will track all changes in our local
 Run the console
 
 ```
-make start-dev -j
+make start-dev
 ```
 
 A browser window will automatically pop up.  Any changes made in that browser session will be tracked as migration changes in your local file system.
