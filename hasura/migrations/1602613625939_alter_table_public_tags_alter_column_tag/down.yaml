@@ -1,0 +1,5 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: ALTER TABLE "public"."tags" DROP CONSTRAINT "tags_tag_key";
+  type: run_sql

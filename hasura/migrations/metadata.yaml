@@ -2,11 +2,29 @@ version: 2
 tables:
 - table:
     schema: public
+    name: question_tags
+  object_relationships:
+  - name: question
+    using:
+      foreign_key_constraint_on: question_id
+  - name: tag
+    using:
+      foreign_key_constraint_on: tag_id
+- table:
+    schema: public
     name: questions
   object_relationships:
   - name: user
     using:
       foreign_key_constraint_on: user_id
+  array_relationships:
+  - name: question_tags
+    using:
+      foreign_key_constraint_on:
+        column: question_id
+        table:
+          schema: public
+          name: question_tags
   insert_permissions:
   - role: user
     permission:
@@ -57,6 +75,14 @@ tables:
 - table:
     schema: public
     name: tags
+  array_relationships:
+  - name: question_tags
+    using:
+      foreign_key_constraint_on:
+        column: tag_id
+        table:
+          schema: public
+          name: question_tags
 - table:
     schema: public
     name: users

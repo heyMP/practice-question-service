@@ -1,0 +1,10 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: |-
+      alter table "public"."question_tags"
+                 add constraint "question_tags_question_id_fkey"
+                 foreign key ("question_id")
+                 references "public"."questions"
+                 ("id") on update restrict on delete restrict;
+  type: run_sql

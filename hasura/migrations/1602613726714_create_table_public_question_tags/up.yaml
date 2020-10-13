@@ -1,0 +1,10 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: CREATE TABLE "public"."question_tags"("question_id" integer NOT NULL, "tag_id"
+      integer NOT NULL, PRIMARY KEY ("question_id","tag_id") );
+  type: run_sql
+- args:
+    name: question_tags
+    schema: public
+  type: add_existing_table_or_view

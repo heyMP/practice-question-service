@@ -1,0 +1,5 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: ALTER TABLE "public"."tags" ADD COLUMN "id" integer NOT NULL DEFAULT nextval('questions_id_seq'::regclass);
+  type: run_sql

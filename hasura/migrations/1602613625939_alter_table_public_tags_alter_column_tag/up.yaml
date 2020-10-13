@@ -1,0 +1,5 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: ALTER TABLE "public"."tags" ADD CONSTRAINT "tags_tag_key" UNIQUE ("tag");
+  type: run_sql
