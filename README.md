@@ -29,8 +29,7 @@ we need to run Hasura in Console mode.  This will track all changes in our local
 Run the console
 
 ```
-cd hasura
-hasura console --admin-secret password
+make start-dev -j
 ```
 
 A browser window will automatically pop up.  Any changes made in that browser session will be tracked as migration changes in your local file system.
