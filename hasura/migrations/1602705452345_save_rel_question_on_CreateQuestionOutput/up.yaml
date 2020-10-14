@@ -1,0 +1,21 @@
+- args:
+    enums: []
+    input_objects: []
+    objects:
+    - description: null
+      fields:
+      - arguments: null
+        description: null
+        name: id
+        type: Int!
+      name: CreateQuestionOutput
+      relationships:
+      - field_mapping:
+          id: id
+        name: question
+        remote_table:
+          name: questions
+          schema: public
+        type: object
+    scalars: []
+  type: set_custom_types

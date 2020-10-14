@@ -1,0 +1,25 @@
+- args:
+    role: user
+    table:
+      name: questions
+      schema: public
+  type: drop_update_permission
+- args:
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      columns:
+      - answer
+      - note
+      - question
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      set:
+        user_id: x-hasura-User-Id
+    role: user
+    table:
+      name: questions
+      schema: public
+  type: create_update_permission

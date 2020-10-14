@@ -1,0 +1,14 @@
+- args:
+    enums: []
+    input_objects: []
+    objects:
+    - description: null
+      fields:
+      - arguments: null
+        description: null
+        name: id
+        type: Int!
+      name: CreateQuestionOutput
+      relationships: null
+    scalars: []
+  type: set_custom_types

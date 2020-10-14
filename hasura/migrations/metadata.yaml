@@ -10,6 +10,38 @@ tables:
   - name: tag
     using:
       foreign_key_constraint_on: tag_id
+  insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+      - question_id
+      - tag_id
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - question_id
+      - tag_id
+      filter: {}
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - tag_id
+      filter:
+        question:
+          user_id:
+            _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        question:
+          user_id:
+            _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: questions
@@ -35,16 +67,18 @@ tables:
       - answer
       - note
       - question
+      - tags
       backend_only: false
   select_permissions:
   - role: user
     permission:
       columns:
-      - id
       - answer
+      - created_at
+      - id
       - note
       - question
-      - created_at
+      - tags
       - updated_at
       - user_id
       filter:
@@ -58,6 +92,7 @@ tables:
       - answer
       - note
       - question
+      - tags
       filter:
         user_id:
           _eq: X-Hasura-User-Id
@@ -83,6 +118,27 @@ tables:
         table:
           schema: public
           name: question_tags
+  insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+      - tag
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - tag
+      filter: {}
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - tag
+      filter: {}
+      check: null
 - table:
     schema: public
     name: users
@@ -94,3 +150,36 @@ tables:
         table:
           schema: public
           name: questions
+actions:
+- name: createQuestion
+  definition:
+    handler: '{{HASURA_ACTION_CREATE_QUESTION_URL}}/createQuestion'
+    output_type: CreateQuestionOutput
+    forward_client_headers: true
+    arguments:
+    - name: question
+      type: String!
+    - name: answer
+      type: String!
+    - name: note
+      type: String
+    - name: tags
+      type: String
+    type: mutation
+    kind: synchronous
+  permissions:
+  - role: user
+custom_types:
+  objects:
+  - name: CreateQuestionOutput
+    fields:
+    - name: id
+      type: Int!
+    relationships:
+    - remote_table:
+        schema: public
+        name: questions
+      name: question
+      type: object
+      field_mapping:
+        id: id

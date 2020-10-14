@@ -1,0 +1,37 @@
+- args:
+    enums: []
+    input_objects: []
+    objects:
+    - description: null
+      fields:
+      - description: null
+        name: affected_rows
+        type: Int!
+      name: CreateQuestionOutput
+      relationships: null
+    scalars: []
+  type: set_custom_types
+- args:
+    comment: null
+    definition:
+      arguments:
+      - description: null
+        name: question
+        type: String!
+      - description: null
+        name: answer
+        type: String!
+      - description: null
+        name: note
+        type: String
+      - description: null
+        name: tags
+        type: String
+      forward_client_headers: false
+      handler: '{{HASURA_ACTION_CREATE_QUESTION_URL}}/createQuestion'
+      headers: []
+      kind: synchronous
+      output_type: CreateQuestionOutput
+      type: mutation
+    name: createQuestion
+  type: update_action

@@ -1,0 +1,7 @@
+- args:
+    action: createQuestion
+    definition:
+      select:
+        filter: {}
+    role: user
+  type: create_action_permission

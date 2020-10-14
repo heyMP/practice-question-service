@@ -1,0 +1,15 @@
+- args:
+    permission:
+      allow_aggregations: false
+      backend_only: false
+      columns:
+      - question_id
+      - tag_id
+      computed_fields: []
+      filter: {}
+      limit: null
+    role: user
+    table:
+      name: question_tags
+      schema: public
+  type: create_select_permission

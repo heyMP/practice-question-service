@@ -1,0 +1,14 @@
+- args:
+    permission:
+      columns:
+      - tag_id
+      filter:
+        question:
+          user_id:
+            _eq: X-Hasura-User-Id
+      set: {}
+    role: user
+    table:
+      name: question_tags
+      schema: public
+  type: create_delete_permission

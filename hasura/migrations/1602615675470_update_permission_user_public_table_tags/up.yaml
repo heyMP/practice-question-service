@@ -1,0 +1,12 @@
+- args:
+    permission:
+      backend_only: false
+      columns:
+      - tag
+      filter: {}
+      set: {}
+    role: user
+    table:
+      name: tags
+      schema: public
+  type: create_update_permission
