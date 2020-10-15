@@ -10,16 +10,14 @@ services:
       - HASURA_GRAPHQL_ENABLE_CONSOLE=true
       # - HASURA_GRAPHQL_ADMIN_SECRET=password
       # - HASURA_GRAPHQL_AUTH_HOOK=https://alluring-coral-fur.glitch.me/simple/webhook
-      - HASURA_ACTION_CREATE_QUESTION_URL=http://hasura-create-question:3000
+      - HASURA_ACTION_CREATE_QUESTION_URL=http://hasura-actions:3000
     depends_on:
       - "postgres"
     restart: always
   
-  hasura-create-question:
+  hasura-actions:
     build:
       context: ./hasura/actions
-    ports: 
-      - 3000:3000
     volumes:
       - /home/node/app/node_modules
       - ./hasura/actions:/home/node/app
