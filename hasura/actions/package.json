@@ -2,7 +2,7 @@
   "name": "nodejs-express-actions",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "src/server.js",
   "scripts": {
     "start": "nodemon -r esm src/server.js"
   },
