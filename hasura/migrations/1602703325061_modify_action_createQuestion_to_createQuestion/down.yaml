@@ -29,7 +29,7 @@
         name: tags
         type: String
       forward_client_headers: false
-      handler: '{{HASURA_ACTION_CREATE_QUESTION_URL}}/createQuestion'
+      handler: '{{HASURA_ACTIONS_URL}}/createQuestion'
       headers: []
       kind: synchronous
       output_type: CreateQuestionOutput

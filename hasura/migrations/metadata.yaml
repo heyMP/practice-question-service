@@ -153,7 +153,7 @@ tables:
 actions:
 - name: createQuestion
   definition:
-    handler: '{{HASURA_ACTION_CREATE_QUESTION_URL}}/createQuestion'
+    handler: '{{HASURA_ACTIONS_URL}}/createQuestion'
     output_type: CreateQuestionOutput
     forward_client_headers: true
     arguments:

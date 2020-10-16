@@ -8,13 +8,14 @@ services:
     environment: 
       - HASURA_GRAPHQL_DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
       - HASURA_GRAPHQL_ENABLE_CONSOLE=true
-      # - HASURA_GRAPHQL_ADMIN_SECRET=password
-      # - HASURA_GRAPHQL_AUTH_HOOK=https://alluring-coral-fur.glitch.me/simple/webhook
-      - HASURA_ACTION_CREATE_QUESTION_URL=http://hasura-actions:3000
+      - HASURA_GRAPHQL_ADMIN_SECRET=password
+      - HASURA_GRAPHQL_AUTH_HOOK=http://hasura-actions:3000/auth
+      - HASURA_ACTIONS_URL=http://hasura-actions:3000
+      - HASURA_GRAPHQL_DEV_MODE=true
     depends_on:
       - "postgres"
     restart: always
-  
+
   hasura-actions:
     build:
       context: ./hasura/actions

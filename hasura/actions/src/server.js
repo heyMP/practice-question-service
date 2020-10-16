@@ -6,11 +6,6 @@ app.use(bodyParser.json());
 
 // routes
 require("./createQuestion.js")(app)
-
-app.get('/hello', async (req, res) => {
-  return res.json({
-    hello: "world"
-  });
-});
+require("./auth.js")(app)
 
 app.listen(PORT);
