@@ -6,6 +6,11 @@
     body {
       background: #fafafa;
     }
+    :root::part(header) {
+      background: red;
+    }
+    practice-question::part(header) {
+    }
   </style>
 </head>
 <body>
@@ -36,9 +41,7 @@
           <option value="error_submitting">Error Submitting</option>
           <option value="service_unavailable">Service Unavailable</option>
         </select>
-        <practice-question>
-          some more light-dom
-        </practice-question>
+        <practice-question endpoint="http://localhost:8080/v1/graphql"></practice-question>
       </div>
       `,
       document.querySelector('#demo')

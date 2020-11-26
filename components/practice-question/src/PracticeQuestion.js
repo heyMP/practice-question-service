@@ -1,13 +1,14 @@
 import { html, css, LitElement } from 'lit-element';
-import { executeCreateQuestion } from "../lib/queries.js";
+import { PracticeQuestionService } from "../lib/PracticeQuestionService.js";
+import "../note-pad.js";
 
 export class PracticeQuestion extends LitElement {
   static get styles() {
     return css`
       :host {
         display: block;
-        padding: 25px;
-        color: var(--practice-question-text-color, #000);
+        padding: var(--practice-question--padding, 25px);
+        color: var(--practice-question--text-color, #000);
         position: relative;
         overflow: hidden;
       }
@@ -53,10 +54,10 @@ export class PracticeQuestion extends LitElement {
 
   static get properties() {
     return {
-      title: { type: String },
-      counter: { type: Number },
+      endpoint: { type: String },
       __state: { type: String, reflect: true },
       __dialogText: { type: String },
+      __dialogState: { type: String },
       __errors: { type: Array }
     };
   }
@@ -65,20 +66,16 @@ export class PracticeQuestion extends LitElement {
     super();
     this.title = 'Hey there';
     this.counter = 5;
+    this.endpoint = "";
     this.__formValue;
     this.__state = "ready";
     this.__dialogText = "";
+    this.__dialogState = "closed";
     this.__errors = [];
   }
 
   connectedCallback() {
     super.connectedCallback();
-    // if the web component wasn't explicitly set to un
-    // then ping the service
-    if (this.__state !== "service_unavailable") {
-      this.pingService();
-    }
-
     this.shadowRoot.addEventListener("focusin", this.__focusinHandler.bind(this));
   }
 
@@ -89,6 +86,26 @@ export class PracticeQuestion extends LitElement {
 
   updated(changedProperties) {
     changedProperties.forEach((oldValue, name) => {
+      if (name === "endpoint") {
+        if (this.endpoint !== "") {
+          this.__practiceQuestionService = new PracticeQuestionService(this.endpoint);
+        }
+      }
+
+      // Cool new technique for computing multiple properties in a performant way.
+      if (["endpoint", "__state"].includes(name)) {
+        clearTimeout(this.__ping);
+        this.__ping = setTimeout(() => {
+          // if the web component wasn't explicitly set to un
+          // then ping the service
+          if (this.__state !== "service_unavailable") {
+            this.__practiceQuestionService.ping()
+              .catch(() => this.__state = "service_unavailable")
+              .finally(() => this.__state = "ready")
+          }
+        }, 0)
+      }
+
       if (name === "__state") {
         // Notify other elements that the state has changed
         this.__dispatchEvent("practice-question-changed", { detail: { state: this.__state }})
@@ -107,9 +124,12 @@ export class PracticeQuestion extends LitElement {
 
           case "successful_submission":
             this.__dialogText = "Question Saved ✅"
+            this.__dialogState = "opened";
             setTimeout(() => {
               this.__state = "ready";
               this.__clearFormValues();
+              this.__dialogState = "closed";
+              this.__dialogText = "";
             }, 2000)
             break;
 
@@ -137,15 +157,16 @@ export class PracticeQuestion extends LitElement {
     event.preventDefault();
     event.stopPropagation();
     this.__state = "submitting";
+    this.__form = event.path[0];
     // get an array of form values
-    const values = this.constructor.collectFormValues(this.shadowRoot)
+    const values = this.constructor.collectFormValues(this.__form);
     // convert the array into an object
     let variables = {}
     for (let value of values) {
       variables[value.name] = value.value;
     }
     const { answer, note, question } = variables;
-    executeCreateQuestion(answer, note, question)
+    this.__practiceQuestionService.createQuestion(answer, note, question)
       .then(res => {
         if (res.errors) {
           this.__state = "error_submitting"
@@ -177,7 +198,7 @@ export class PracticeQuestion extends LitElement {
   }
 
   __clearFormValues() {
-    const formItems = this.shadowRoot.querySelectorAll('[name]');
+    const formItems = this.__form.querySelectorAll('[name]');
     formItems.forEach(element => {
       element.value = ""
       // also make sure there are default placeholders for error validation
@@ -209,14 +230,6 @@ export class PracticeQuestion extends LitElement {
     return values;
   }
 
-  pingService() {
-    fetch("http://localhost:8080/v1/graphql", {
-      method: "OPTIONS",
-      headers: { "Content-Type": "application/json" }
-    })
-      .catch(() => this.__state = "service_unavailable")
-      .finally(() => this.__state = "ready")
-  }
 
   // Add the dirty form field validation trick where
   // we use an empty placeholder to tell if the form
@@ -230,35 +243,39 @@ export class PracticeQuestion extends LitElement {
 
   render() {
     return html`
-    <form @submit=${this.submit}>
-      <div part="field">
-        <label part="label" for="question">question</label>
-        <textarea id="question" name="question" part="question" .disabled=${this.__state !== "ready"} required placeholder=" "></textarea>
-      </div>
-      
-      <div part="field">
-        <label part="label" for="answer">answer</label>
-        <textarea id="answer" name="answer" part="answer" .disabled=${this.__state !== "ready"} required placeholder=" "></textarea>
-      </div>
+    <note-pad>
+      <form @submit=${this.submit}>
+        <div part="field">
+          <label part="label" for="question">question</label>
+          <textarea id="question" name="question" part="question" rows="4" .disabled=${this.__state !== "ready"} required placeholder="Question"></textarea>
+        </div>
+        
+        <div part="field">
+          <label part="label" for="answer">answer</label>
+          <textarea id="answer" name="answer" part="answer" .disabled=${this.__state !== "ready"} required placeholder="Answer"></textarea>
+        </div>
 
-      <div part="field">
-        <label part="label" for="note">note</label>
-        <textarea id="note" name="note" part="note" .disabled=${this.__state !== "ready"}></textarea>
-      </div>
+        <div part="field">
+          <label part="label" for="note">note</label>
+          <textarea id="note" name="note" part="note" placeholder="Note" .disabled=${this.__state !== "ready"}></textarea>
+        </div>
 
-      <input type="submit" value="Submit" part="button">
-    </form>
+        <input type="submit" value="Submit" part="button">
+      </form>
 
-      <div part="dialog">
-        ${this.__dialogText ? html`
-          <div part="dialog-text">${this.__dialogText}</div>
-        ` : ''}
-        ${this.__errors ? html`
-          ${this.__errors.map(error => html`
-            <div part="error">${error.message}</div>
-          `)}
-        ` : ""}
-      </div>
+      ${(this.__dialogText || this.__errors.length > 0) ? html`
+        <div slot="dialog">
+          ${this.__dialogText ? html`
+            <div part="dialog-text">${this.__dialogText}</div>
+          ` : ''}
+          ${this.__errors ? html`
+            ${this.__errors.map(error => html`
+              <div part="error">${error.message}</div>
+            `)}
+          ` : ""}
+        </div>
+      ` : ''}
+    </note-pad>
     `;
   }
 }
