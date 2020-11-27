@@ -1,5 +1,8 @@
 # Practice Questions Service
 
+![](./docs/screenshot1.png)
+![](./docs/screenshot4.png)
+
 ## Getting Started
 
 Run the Backend
@@ -36,10 +39,24 @@ make start-dev
 
 A browser window will automatically pop up.  Any changes made in that browser session will be tracked as migration changes in your local file system.
 
-## Applying Hasura Changes
+### Applying Hasura Changes
 
 ```
 cd hasura
 hasura migrate apply --admin-secret password
 hasura seeds apply --admin-secret password
 ```
+
+
+## Web Components
+
+Install the web component dependencies
+
+```
+cd components/practice-question
+npm install
+npm start
+```
+
+Visit http://localhost:8000/demo/
+
