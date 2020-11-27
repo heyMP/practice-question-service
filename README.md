@@ -5,7 +5,7 @@
 Run the Backend
 
 ```
-docker-compose up
+make start-dev
 ```
 
 Visit the Hasura Console http://localhost:8080
