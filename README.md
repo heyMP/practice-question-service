@@ -23,6 +23,8 @@ Visit the practice-question web component demo http://localhost:8001/demo/
 
 ## Developing in Hasura
 
+Install the [Hasura CLI](https://hasura.io/docs/1.0/graphql/core/hasura-cli/index.html) locally. This unfortunitely needs to be installed locally until [this issue is resolved](https://github.com/hasura/graphql-engine/pull/3570)
+
 Any time we are making changes to the Hasura backend structure (i.e. the database layer)
 we need to run Hasura in Console mode.  This will track all changes in our local file system.
 
