@@ -13,17 +13,17 @@ export class PracticeQuestion extends LitElement {
         overflow: hidden;
       }
 
+      [part="dialog"] {
+        display: block;
+        transform: scale(0);
+        transition: all .3s;
+      }
+
       :host([__state="submitting"]) [part="dialog"],
       :host([__state="successful_submission"]) [part="dialog"],
       :host([__state="error_submitting"]) [part="dialog"],
       :host([__state="service_unavailable"]) [part="dialog"] {
         transform: scale(1);
-      }
-
-      [part="dialog"] {
-        display: block;
-        transform: scale(0);
-        transition: all .3s;
       }
 
       [part="label"] {
@@ -46,14 +46,12 @@ export class PracticeQuestion extends LitElement {
       textarea {
         width: 100%;
       }
-
-      [__state="submitting"] {
-      }
     `;
   }
 
   static get properties() {
     return {
+      title: { type: String },
       endpoint: { type: String },
       __state: { type: String, reflect: true },
       __dialogText: { type: String },
@@ -86,22 +84,25 @@ export class PracticeQuestion extends LitElement {
 
   updated(changedProperties) {
     changedProperties.forEach((oldValue, name) => {
-      if (name === "endpoint") {
-        if (this.endpoint !== "") {
-          this.__practiceQuestionService = new PracticeQuestionService(this.endpoint);
-        }
-      }
-
       // Cool new technique for computing multiple properties in a performant way.
       if (["endpoint", "__state"].includes(name)) {
+        this.__practiceQuestionService = new PracticeQuestionService(this.endpoint);
         clearTimeout(this.__ping);
         this.__ping = setTimeout(() => {
           // if the web component wasn't explicitly set to un
           // then ping the service
           if (this.__state !== "service_unavailable") {
-            this.__practiceQuestionService.ping()
+            this.__practiceQuestionService.ping(this.endpoint)
+              .then(res => {
+                console.log(res)
+                if (res.status === 204) {
+                  this.__state = "ready"
+                }
+                else {
+                  this.__state = "service_unavailable"
+                }
+              })
               .catch(() => this.__state = "service_unavailable")
-              .finally(() => this.__state = "ready")
           }
         }, 0)
       }
@@ -135,8 +136,9 @@ export class PracticeQuestion extends LitElement {
 
           case "service_unavailable":
             this.__dialogText = "Service Unavailable 🔌"
+            this.__dialogState = "opened";
             break;
-        
+
           default:
             break;
         }
@@ -219,7 +221,7 @@ export class PracticeQuestion extends LitElement {
 
   /**
    * Collect all values of a form
-   * @param {DOM Node} element 
+   * @param {DOM Node} element
    * @return {object}
    *  - value
    *  - name
@@ -229,7 +231,6 @@ export class PracticeQuestion extends LitElement {
     const values = [...formItems].map(i => ({ name: i.name, value: i.value }));
     return values;
   }
-
 
   // Add the dirty form field validation trick where
   // we use an empty placeholder to tell if the form
@@ -243,13 +244,14 @@ export class PracticeQuestion extends LitElement {
 
   render() {
     return html`
-    <note-pad>
+    <note-pad .dialogState=${this.__dialogState}>
+      ${this.title ? html`<h1 slot="header">${this.title}</h1>`: ""}
       <form @submit=${this.submit}>
         <div part="field">
           <label part="label" for="question">question</label>
           <textarea id="question" name="question" part="question" rows="4" .disabled=${this.__state !== "ready"} required placeholder="Question"></textarea>
         </div>
-        
+ 
         <div part="field">
           <label part="label" for="answer">answer</label>
           <textarea id="answer" name="answer" part="answer" .disabled=${this.__state !== "ready"} required placeholder="Answer"></textarea>

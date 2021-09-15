@@ -28,7 +28,8 @@ export class NotePad extends LitElement {
         padding: var(--note-pad--header--padding, 15px);
       }
 
-      [part='header'] h1 {
+      [part='header'] *,
+      [part='header'] ::slotted(*) {
         color: var(--note-pad--header--h1--font-color, #fff);
         font-size: var(--note-pad--header--h1--font-size, 24px);
         font-weight: var(--note-pad--header--h1--font-weight, 400);
@@ -159,7 +160,7 @@ export class NotePad extends LitElement {
   }
 
   closeDialog() {
-    this.dialogState = "closed" 
+    this.dialogState = "closed"
   }
 
   updated(changedProperties) {
@@ -255,20 +256,21 @@ export class NotePad extends LitElement {
     }, 0);
   }
 
+  /**
+   * @todo this is bugged.  Keeps opening after submission.
+   */
   dialogSlotChanged(event) {
-    // Get a list of all the immediate children in the light dom that do not have a named slot attribute
-    clearTimeout(this.__deriveDialogState);
-    this.__deriveDialogState = setTimeout(() => {
-      const slotChildren = [...this.children];
-      if (slotChildren.length > 0) {
-        this.dialogState = "opened";
-        console.log(this.dialogState)
-      }
-      else {
-        this.dialogState = "closed";
-        console.log(this.dialogState)
-      }
-    }, 0);
+    // // Get a list of all the immediate children in the light dom that do not have a named slot attribute
+    // clearTimeout(this.__deriveDialogState);
+    // this.__deriveDialogState = setTimeout(() => {
+    //   const slotChildren = [...this.children];
+    //   if (slotChildren.length > 0) {
+    //     this.dialogState = "opened";
+    //   }
+    //   else {
+    //     this.dialogState = "closed";
+    //   }
+    // }, 0);
   }
 
   registerTextAreaAutoExpand(element) {
