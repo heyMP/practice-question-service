@@ -53,6 +53,7 @@ export class PracticeQuestion extends LitElement {
     return {
       title: { type: String },
       endpoint: { type: String },
+      fields: { type: String},
       __state: { type: String, reflect: true },
       __dialogText: { type: String },
       __dialogState: { type: String },
@@ -65,6 +66,7 @@ export class PracticeQuestion extends LitElement {
     this.title = 'Hey there';
     this.counter = 5;
     this.endpoint = "";
+    this.fields = "question, answer, note";
     this.__formValue;
     this.__state = "ready";
     this.__dialogText = "";
@@ -175,13 +177,7 @@ export class PracticeQuestion extends LitElement {
           // find a good error message for user.
           this.__errors = res.errors.map(error => {
             const message = error.message
-            if (message.includes("answer_check_empty_string")) {
-              return {
-                id: "answer_check_empty_string",
-                message: "Answer field is required"
-              }
-            }
-            else if (message.includes("question_check_empty_string")) {
+            if (message.includes("question_check_empty_string")) {
               return {
                 id: "question_check_empty_string",
                 message: "Question field is required"
@@ -251,16 +247,21 @@ export class PracticeQuestion extends LitElement {
           <label part="label" for="question">question</label>
           <textarea id="question" name="question" part="question" rows="4" .disabled=${this.__state !== "ready"} required placeholder="Question"></textarea>
         </div>
- 
+
+        ${this.fields.includes('answer') ? html`
         <div part="field">
           <label part="label" for="answer">answer</label>
-          <textarea id="answer" name="answer" part="answer" .disabled=${this.__state !== "ready"} required placeholder="Answer"></textarea>
+          <textarea id="answer" name="answer" part="answer" .disabled=${this.__state !== "ready"} placeholder="Answer"></textarea>
         </div>
+        `: ''}
 
+        ${this.fields.includes('note') ? html`
         <div part="field">
           <label part="label" for="note">note</label>
           <textarea id="note" name="note" part="note" placeholder="Note" .disabled=${this.__state !== "ready"}></textarea>
         </div>
+        `: ''}
+
 
         <input type="submit" value="Submit" part="button">
       </form>

@@ -1,0 +1,6 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: alter table "public"."questions" add constraint "answer_check_empty_string"
+      check (CHECK (answer <> ''::text));
+  type: run_sql

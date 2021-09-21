@@ -52,7 +52,7 @@ export class PracticeQuestionService {
     }
   }
 
-  mutation createQuestion($question: String!, $answer: String!, $note: String = "", $tags: String = "") {
+  mutation createQuestion($question: String!, $answer: String = "", $note: String = "", $tags: String = "") {
     insert_questions_one(object: {question: $question, answer: $answer, note: $note, tags: $tags}) {
       id
     }
