@@ -20,21 +20,21 @@
     import { html, render } from 'lit-html';
     import '../practice-question.js';
 
-    let state = 'ready';
-    const updateState = (state) => {
+    const updateState = (e) => {
+      const state = e.target.value ?? 'ready';
       const practiceQuestion = document.querySelector("practice-question");
-      practiceQuestion.setAttribute("__state", state);
+      practiceQuestion.__state = state;
     }
 
     const practiceQuestionChanged = (e) => {
-      console.log('Practice Question Changed', e.detail)
+      console.log('Practice Question Changed', e.detail.target)
     }
 
     render(
       html`
       <div @practice-question-changed=${practiceQuestionChanged}>
         <label for="state">Choose a state:</label>
-        <select name="state" id="state" @change=${(e) => updateState(e.target.value)}>
+        <select name="state" id="state" @change=${(e) => updateState(e)}>
           <option value="ready">Ready</option>
           <option value="submitting">Submitting</option>
           <option value="successful_submission">Successful Submission</option>
